@@ -1,31 +1,116 @@
-# -------------------------------------------------------------------------- #
-#
-# Copyright (C) 2024  Intel Corporation. All rights reserved.
-# Your use of Intel Corporation's design tools, logic functions 
-# and other software and tools, and any partner logic 
-# functions, and any output files from any of the foregoing 
-# (including device programming or simulation files), and any 
-# associated documentation or information are expressly subject 
-# to the terms and conditions of the Intel Program License 
-# Subscription Agreement, the Intel Quartus Prime License Agreement,
-# the Intel FPGA IP License Agreement, or other applicable license
-# agreement, including, without limitation, that your use is for
-# the sole purpose of programming logic devices manufactured by
-# Intel and sold by Intel or its authorized distributors.  Please
-# refer to the applicable agreement for further details, at
-# https://fpgasoftware.intel.com/eula.
-#
-# -------------------------------------------------------------------------- #
-#
-# Quartus Prime
-# Version 23.1std.1 Build 993 05/14/2024 SC Lite Edition
-# Date created = 10:25:13  November 04, 2024
-#
-# -------------------------------------------------------------------------- #
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
-QUARTUS_VERSION = "23.1"
-DATE = "10:25:13  November 04, 2024"
+entity PetCompanion is
 
-# Revisions
+port(
+    clk          : in  STD_LOGIC;    
+    reset        : in  STD_LOGIC;    
+    proximity    : in  STD_LOGIC;     
+    light_sensor : in  STD_LOGIC;
+    irf          : in  std_logic;   -- Digital signal from IR sensor
+    obstaclef    : out std_logic;
+    irb      	  : in  std_logic;   -- Digital signal from IR sensor
+    obstacleb    : out std_logic;
+    motor11      : out STD_LOGIC;
+	 irl1         : in  std_logic;
+	 obstaclel1   : out std_logic;
+	 irl2         : in  std_logic;
+	 obstaclel2   : out std_logic;
+	 irl3         : in  std_logic;
+	 obstaclel3   : out std_logic;
+	 irr1         : in  std_logic;
+	 obstacler1   : out std_logic;
+	 irr2         : in  std_logic;
+	 obstacler2   : out std_logic;
+	 irr3         : in  std_logic;
+	 obstacler3   : out std_logic;
+	 en1          : out  std_logic;
+	 en2          : out  std_logic;
+    motor12      : out STD_LOGIC;
+    motor21      : out STD_LOGIC;
+    motor22      : out STD_LOGIC;      
+    led          : out STD_LOGIC);
+end PetCompanion;
 
-PROJECT_REVISION = "project1"
+architecture arch of PetCompanion is
+    signal counter : integer:=0 ;
+begin
+	process(light_sensor)
+    begin
+         if reset = '0' then
+            led <= '0';
+          else
+            
+            if light_sensor = '1' then
+                led <= '1'; 
+            else
+                led <= '0'; 
+            end if;
+				
+			end if;
+    end process;
+    
+
+    process (clk,reset,irf,irb,irl1,irl2,irl3,irr1,irr2,irr3)
+    begin
+			if reset = '0' then
+				obstaclef<='0';
+				motor11<='0' ;
+				motor12<='0' ;
+				en1 <= '0' ;
+				motor21<='0' ;
+				motor22<='0' ;
+				en2 <= '0' ;
+				
+			end if ;
+				if (irf = '0') then
+					en1<='1';
+					motor11<='0' ;
+					motor12 <= '1' ; 
+					en2<='1';
+					motor21<='0' ;
+					motor22 <= '1' ; 
+
+				elsif irb = '0' then
+					en1<='1' ;
+					motor11 <= '1' ; 
+					motor12 <= '0' ; 
+					en2<= '1' ;
+					motor21 <= '1' ; 
+					motor22 <= '0' ; 
+				
+				
+				elsif (irl1='0' or irl2='0' or irl3='0') then 
+					en1<='1' ;
+					motor11 <= '0' ; 
+					motor12 <= '1' ; 
+					en2<= '1' ;
+					motor21 <= '1' ; 
+					motor22 <= '0' ; 
+				elsif (irr1='0' or irr2='0' or irr3='0') then 
+					en1<='1' ;
+					motor11 <= '1' ; 
+					motor12 <= '0' ; 
+					en2<= '1' ;
+					motor21 <= '0' ; 
+					motor22 <= '1' ; 
+				
+				else
+					en1<='0';
+					motor11<='0' ;
+					motor12 <= '0' ;  
+					en2<='0';
+					motor21<='0' ;
+					motor22 <= '0' ; 
+
+
+				end if ;
+             
+
+    end process;
+	 
+
+   
+end arch;
