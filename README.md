@@ -1,0 +1,1 @@
+A toy car that plays a "catch me if you can" game with your pet. The car moves away whenever something (possibly a pet) gets near to it. The car also has lights that turn on whenever it's dark so that your pet can keep playing all the time. A project based on FPGA and writing VHDL code.
